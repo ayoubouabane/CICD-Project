@@ -1,0 +1,35 @@
+image: node:14
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+stages:
+  - build
+  - test
+  - package
+  - deploy
+build_job:
+  stage: build
+  script:
+    - npm install
+    - echo " bonjour " > msg1.txt
+  artifacts:
+    paths:
+      - msg1.txt
+test_job:
+  stage: test
+  script:
+    - chmod +x node_modules/.bin/mocha
+    - npm test
+package_job:
+  stage: package
+  script:
+    - echo "package..."
+    - cat msg1.txt | gzip > package.gz
+  artifacts:
+    paths:
+      - package.gz     
+deploy_job:
+  stage: deploy
+  script:
+    - echo "Deploying to production."
